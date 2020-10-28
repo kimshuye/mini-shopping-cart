@@ -3,6 +3,9 @@ version: '3.8'
 services:
   store-service:
     image: boyone/toy-store-service:0.0.2
+    build:
+      context: store-service
+      dockerfile: Dockerfile
     container_name: store-service
     ports:
       - '8000:8000'
@@ -52,6 +55,8 @@ services:
         '/imposters/imposters.json',
         '--allowInjection',
       ]
+    ports:
+      - "8882:80"
 
   shipping-gateway:
     image: andyrbell/mountebank:2.3.2
@@ -65,5 +70,5 @@ services:
         '/imposters/imposters.json',
         '--allowInjection',
       ]
-    # ports:
-    #   - "8883:8882"
+    ports:
+      - "8883:80"
