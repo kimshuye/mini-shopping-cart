@@ -1,12 +1,7 @@
-backend: code_analysis_backend run_unittest_backend run_integratetest_backend build_backend start_service run_newman stop_service
+backend: code_analysis_backend run_unittest_backend run_integratetest_backend build_backend start_service run_robot_request stop_service
 
 run_robot_selinium: 
 	robot test/ui/shopping_cart_success.robot
-
-# run_newman: 
-# 	sleep 5
-# 	cat tearup/init.sql | docker exec -i store-database /usr/bin/mysql -u sealteam --password=sckshuhari --default-character-set=utf8  toy
-# 	newman run atdd/api/shopping_cart_success.json -e atdd/api/environment/local_environment.json -d atdd/api/data/shopping_cart_success.json
 
 run_robot_request:
 	sleep 5
