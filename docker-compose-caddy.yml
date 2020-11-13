@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  store-service:
+    image: boyone/toy-store-service:0.0.2
+    build:
+      context: store-service
+      dockerfile: Dockerfile
+    container_name: store-service
+    ports:
+      - '8000:8000'
+    depends_on:
+      - store-database
+    restart: always
+    environment:
+      - TEST_MODE=true
+      - BANK_GATEWAY=bank-gateway
+      - SHIPPING_GATEWAY=shipping-gateway
+      - DBCONNECTION=sealteam:sckshuhari@(store-database:3306)/toy
+
+  store-database:
+    image: mysql:8.0.22
+    container_name: store-database
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=sealteam
+      - MYSQL_PASSWORD=sckshuhari
+      - MYSQL_DATABASE=toy
+    volumes:
+      - ./tearup/:/docker-entrypoint-initdb.d/
+
+  api-gateway:
+    image: caddy:2.2.1-alpine
+    volumes:
+        - ./caddy:/etc/caddy
+        - ./html:/srv
+    depends_on:
+      - store-service
+    ports:
+        - "80:80"
+        - "443:443"
+
+  bank-gateway:
+    image: andyrbell/mountebank:2.3.2
+    volumes:
+      - ./bank-gateway/imposters.json:/imposters/imposters.json
+    command:
+      [
+        'mb',
+        'start',
+        '--configfile',
+        '/imposters/imposters.json',
+        '--allowInjection',
+      ]
+
+  shipping-gateway:
+    image: andyrbell/mountebank:2.3.2
+    volumes:
+      - ./shipping-gateway/imposters.json:/imposters/imposters.json
+    command:
+      [
+        'mb',
+        'start',
+        '--configfile',
+        '/imposters/imposters.json',
+        '--allowInjection',
+      ]
