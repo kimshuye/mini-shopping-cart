@@ -4,7 +4,7 @@ run_robot_selinium:
 	robot test/ui/shopping_cart_success.robot
 
 run_robot_requests:
-	sleep 5
+	sleep 10
 	cat tearup/init.sql | docker exec -i store-database /usr/bin/mysql -u sealteam --password=sckshuhari --default-character-set=utf8  toy
 	robot test/api/checkout-success-template.robot
 
@@ -16,7 +16,7 @@ run_unittest_backend:
 
 run_integratetest_backend:
 	docker-compose up -d store-database bank-gateway shipping-gateway
-	sleep 7
+	sleep 10
 	cat tearup/init.sql | docker exec -i store-database /usr/bin/mysql -u sealteam --password=sckshuhari --default-character-set=utf8  toy
 	cd store-service && go test -tags=integration ./...
 	docker-compose down
