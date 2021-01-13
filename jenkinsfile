@@ -25,7 +25,7 @@ pipeline {
     stage('run ATDD') {
       steps {
         sh 'make start_service'
-        sh 'make run_robot_request'
+        sh 'make run_robot_requests'
         sh 'make run_robot_selinium'
         sh 'make stop_service'
       }
