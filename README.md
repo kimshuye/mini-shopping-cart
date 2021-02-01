@@ -7,6 +7,17 @@
 npm i -g newman@5.2.2 newman-reporter-htmlextra@1.20.1
 
 ```
+## Install robotframework-requests
+
+```bashs
+
+pip3 install robotframework-requests==0.8.0 robotframework==3.2.2
+
+```
+
+## Install Robot Framework Intellisense FORK with vscode plugin
+
+
 
 ## Command-line
 
