@@ -2,7 +2,11 @@
 
 ## Install newman
 
+```bashs
 
+npm i -g newman@5.2.2 newman-reporter-htmlextra@1.20.1
+
+```
 
 ## Command-line
 
