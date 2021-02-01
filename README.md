@@ -56,6 +56,19 @@ make run_robot_selinium
 make run_robot_requests
 ```
 
+### Run newman Integratetestion Test
+
+```sh
+make run_integratetest_backend_by_newman
+```
+
+### Run newman Integratetestion Test with Reports
+
+```sh
+make run_integratetest_backend_by_newman_with_reports
+```
+
+
 ### Stop Docker Compose
 
 ```sh

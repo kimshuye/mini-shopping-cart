@@ -36,3 +36,10 @@ stop_service:
 seed:
 	cat tearup/init.sql | docker exec -i store-database /usr/bin/mysql -u sealteam --password=sckshuhari --default-character-set=utf8  toy
 
+run_integratetest_backend_by_newman:
+	make seed && newman run atdd/api/ซื้อสินค้าได้สำเร็จ_v1.json -d atdd/api/data/test-data.json -e atdd/api/environment/local.json
+
+run_integratetest_backend_by_newman_with_reports:
+	make seed && newman run atdd/api/ซื้อสินค้าได้สำเร็จ_v1.json -d atdd/api/data/test-data.json -e atdd/api/environment/local.json -r htmlextra --reporter-htmlextra-export atdd/api/reports/buy_order_sucess.html
+
+
