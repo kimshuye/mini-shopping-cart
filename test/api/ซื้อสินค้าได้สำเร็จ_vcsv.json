@@ -1,0 +1,275 @@
+{
+	"info": {
+		"_postman_id": "4771af55-14de-42e2-af69-96cd74aafb3d",
+		"name": "ซื้อสินค้าได้สำเร็จcsv",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "mock_time",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/mockTime/{{mocktime}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"mockTime",
+						"{{mocktime}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "product_list",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Total product should be 31\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.total).to.eql(31);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Product name should be '\"+data['name']+\"'\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(pm.response.text()).to.include(data['name']);",
+							"});",
+							"",
+							"pm.test(\"Product price should be '\"+data['price']+\"'\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(pm.response.text()).to.include(data['price']);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/v1/product",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"product"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "product_detail",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Product id should be '\"+data['product_detail']['product_id']+\"'\", function () {",
+							"    ",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.id).to.eql(data['product_detail']['product_id']);",
+							"",
+							"});",
+							"",
+							"",
+							"pm.test(\"Product name should be '\"+data['product_detail']['product_name']+\"'\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.product_name).to.eql(data['product_detail']['product_name']);",
+							"});",
+							"",
+							"pm.test(\"Product price should be '\"+data['product_detail']['product_price']+\"'\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.product_price).to.eql(data['product_detail']['product_price']);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Product quantity should be '\"+data['product_detail']['quantity']+\"'\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.quantity).to.eql(data['product_detail']['quantity']);",
+							"});",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/v1/product/{{product_id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"product",
+						"{{product_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "submit_order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Product order id in cart should be '8004359104'\", function () {",
+							"    var jsonData = pm.response.json();",
+							"",
+							"    pm.expect(jsonData.order_id).to.exist;",
+							"    pm.environment.set(\"order_id\", jsonData.order_id);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Product total price should be '\"+data['order']['total']+\"'\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.total_price).to.eql(data['order']['total']);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"cart\":[\n\t\t{\n\t\t\t\"product_id\": {{cart_product_id}},\n\t\t\t\"quantity\": {{cart_quantity}}\n\t\t}\n\t],\n\t\"shipping_method\": \"{{shipping_method}}\",\n\t\"shipping_address\": \"{{shipping_address}}\",\n\t\"shipping_sub_district\": \"{{shipping_sub_district}}\",\n\t\"shipping_district\": \"{{shipping_district}}\",\n\t\"shipping_province\": \"{{shipping_province}}\",\n\t\"shipping_zip_code\": \"{{shipping_zip_code}}\",\n\t\"recipient_name\": \"{{recipient_name}}\",\n\t\"recipient_phone_number\": \"{{recipient_phone_number}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/v1/order",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "confirm_payment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Product notify message should be 'วันเวลาที่ชำระเงิน 1/3/2020 13:30:00 หมายเลขคำสั่งซื้อ \"+pm.environment.get(\"order_id\")+\" คุณสามารถติดตามสินค้าผ่านช่องทาง Kerry หมายเลข 1785261900'\", function () {",
+							"    var jsonData = pm.response.json();",
+							"",
+							"    pm.expect(jsonData.notify_message).to.eql(\"วันเวลาที่ชำระเงิน 1/3/2020 13:30:00 หมายเลขคำสั่งซื้อ \"+pm.environment.get(\"order_id\")+\" คุณสามารถติดตามสินค้าผ่านช่องทาง Kerry หมายเลข 1785261900\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.get(\"order_id\");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"order_id\" : {{order_id}},\n    \"payment_type\" : \"credit\",\n    \"type\" : \"visa\",\n    \"card_number\" : \"4719700591590995\",\n    \"cvv\" : \"752\",\n    \"expired_month\" : 7,\n    \"expired_year\" : 20,\n    \"card_name\" : \"Karnwat Wongudom\",\n    \"total_price\" : 14.95\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/v1/confirmPayment",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"confirmPayment"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
