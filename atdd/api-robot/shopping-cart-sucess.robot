@@ -17,16 +17,19 @@ Library     RequestsLibrary
 *** Keywords ***
 
 Product list
-    # arrange
+    ## arrange
     Create Session   toy_store   http://localhost:8000
     &{accept}=   Create Dictionary   Accept=application/json
 
-    # act
-    ${productList}=   Get Request   toy_store   /api/v1/product    headers=&{accept}
+    ## act
+    # ${productList}=   Get Request   toy_store   /api/v1/product    headers=&{accept}
     
-    # assert
-    Status Should Be  200   ${productList}
-    Should Be Equal   ${productList.json()["total"]}   ${31}
+    ## assert
+    # Status Should Be  200   ${productList}
+    ${productList}=   Get On Session   toy_store   /api/v1/product    headers=&{accept}    expected_status=200
+    Should Be Equal As Integers    ${productList.json()["total"]}    31
+    Should Be Equal As Strings    ${productList.json()["products"][1]["product_name"]}    43 Piece dinner Set
+    Should Be Equal As Numbers    ${productList.json()["products"][1]["product_price"]}    12.95
     
 
 
