@@ -17,16 +17,10 @@ ${text_format}=    application/json
 *** Test Cases ***
 
 ซื้อสินค้าที่มีชื่อว่า 43 Piece dinner Set จำนวน 1 ชิ้น โดยชำระด้วยบัตรเครดิต แล้วชำระแล้วจะมีข้อความตอบกลับว่า ยืนยันการชำระพร้อม หมายเลขจัดส่ง
-    ค้นหารายการสินค้า    2    43 Piece dinner Set
-    เลือกดูรายละเอียดสินค้า    ${2}    43 Piece dinner Set
-    เพิ่มสินค้าลงตะกร้า    ${2}    ${1}    ${14.95}
-    เลือกวิธีการชำระเงิน และได้รับข้อความแจ้งเตือน    ${14.95}
+    ทำการชำระเงิน    43 Piece dinner Set    ${2}    ${1}    ${14.95}
 
 ซื้อสินค้าที่มีชื่อว่า Balance Training Bicycle จำนวน 2 ชิ้น โดยชำระด้วยบัตรเครดิต แล้วชำระแล้วจะมีข้อความตอบกลับว่า ยืนยันการชำระพร้อม หมายเลขจัดส่ง
-    ค้นหารายการสินค้า    1    Balance Training Bicycle
-    เลือกดูรายละเอียดสินค้า    ${1}    Balance Training Bicycle
-    เพิ่มสินค้าลงตะกร้า    ${1}    ${2}    ${241.90}
-    เลือกวิธีการชำระเงิน และได้รับข้อความแจ้งเตือน    ${241.90}
+    ทำการชำระเงิน    Balance Training Bicycle    ${1}    ${2}    ${241.90}
 
 
 
@@ -87,8 +81,16 @@ ${text_format}=    application/json
     
     &{body}=    Create Dictionary    order_id=${order_id}    payment_type=credit    type=visa    card_number=4719700591590995    cvv=752    expired_month=${7}    expired_year=${20}    card_name=Karnwat Wongudom    total_price=${total_price}
 
+    ${productList}=   Get On Session   ${session_name}   /mockTime/01032020T13:30:00    headers=&{accept}    expected_status=200
     ${orderStatus}=    POST On Session    ${session_name}    /api/v1/confirmPayment    expected_status=200    json=${body}    headers=&{accept}
     
     # Request Should Be Successful    ${orderStatus}
     Should Be Equal As Strings    ${orderStatus.json()["notify_message"]}    วันเวลาที่ชำระเงิน 1/3/2020 13:30:00 หมายเลขคำสั่งซื้อ ${order_id} คุณสามารถติดตามสินค้าผ่านช่องทาง Kerry หมายเลข 1785261900
+
+ทำการชำระเงิน
+    [Arguments]    ${product_name}    ${product_id}    ${quantity}    ${total_price}
+    ค้นหารายการสินค้า    ${product_id}    ${product_name}
+    เลือกดูรายละเอียดสินค้า    ${product_id}    ${product_name}
+    เพิ่มสินค้าลงตะกร้า    ${product_id}    ${quantity}    ${total_price}
+    เลือกวิธีการชำระเงิน และได้รับข้อความแจ้งเตือน    ${total_price}
 
