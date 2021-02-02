@@ -1,0 +1,44 @@
+*** Variables ***
+
+&{product_list}=   total=${31}    product_id=2    product_name=43 Piece dinner Se    product_price=12.95    quantity=10
+
+&{expected}=   mocktime=01032020T13:30:00    product_list=${product_list}
+
+# [
+#     {
+#         "mocktime": "01032020T13:30:00",
+
+#         "product_list": {
+#             "total": 31,
+#             "product_id": 2,
+#             "product_name": "43 Piece dinner Set",
+#             "product_price": 12.95,
+#             "quantity": 10
+#         },
+
+#         "product_id": 2,
+#         "product_detail": {
+#             "product_id": 2,
+#             "product_name": "43 Piece dinner Set",
+#             "product_price": 12.95,
+#             "quantity": 10
+
+#         },
+        
+#         "cart_product_id": 2,
+#         "cart_quantity": 1,
+#         "shipping_method": "Kerry",
+#         "shipping_address": "405/37 ถ.มหิดล",
+#         "shipping_sub_district": "ท่าศาลา",
+#         "shipping_district": "เมือง",
+#         "shipping_province": "เชียงใหม่",
+#         "shipping_zip_code": "50000",
+#         "recipient_name": "ณัฐญา ชุติบุตร",
+#         "recipient_phone_number": "0970809292",
+
+#         "order": {
+#             "total": 14.95
+#         }
+
+#     }
+# ]
