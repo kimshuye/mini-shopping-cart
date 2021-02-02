@@ -19,20 +19,19 @@ ${text_format}=    application/json
 
 
 *** Test Cases ***
-ซื้อสินค้าได้สำเร็จ
-    เข้าชมรายการสินค้า โดยค้นหาสินค้า ที่ชื่อว่า 43 Piece dinner Set
-    เลือกดูรายละเอียดของสินค้า ที่ชื้อว่า 43 Piece dinner Set ว่าจำนวนของสินค้า คงเหลืออยู่ 10
-    เพิ่มสินค้า ที่ชื้อว่า 43 Piece dinner Set ลงในตะกร้าสินค้า พร้อมแจ้งที่อยู่จัดส่ง จะได้รับ หมายเลขคำสั่งซื้อ ที่ 8004359104 และยอดที่จะต้องชำระคือ 14.95
-    เลือกวิธีชำระเงินด้วย บัตรเครดิต พร้อมกรอกข้อมูลอื่นๆที่จำเป็น จะได้รับข้อความแจ้งเตือน ระบุหมายเลขจัดส่ง
+ซื้อสินค้าที่มีชื่อว่า 43 Piece dinner Set จำนวน 1 ชิ้น โดยชำระด้วยบัตรเครดิต แล้วชำระแล้วจะมีข้อความตอบกลับว่า ยืนยันการชำระพร้อม หมายเลขจัดส่ง
+    เข้าชมรายการสินค้า    2
+    เลือกดูรายละเอียดสินค้า    2    43 Piece dinner Set
+    เพิ่มสินค้าลงตะกร้า    2    1    14.95
+    เลือกวิธีการชำระเงิน และได้รับข้อความแจ้งเตือน    ${14.95}
 
 
 
 *** Keywords ***
 
-เข้าชมรายการสินค้า โดยค้นหาสินค้า ที่ชื่อว่า 43 Piece dinner Set    
-    # [Arguments]    {pam1}    {pam2}
+เข้าชมรายการสินค้า
+    [Arguments]    ${product_id}
     ## arrange
-    
 
     ## act
     # ${productList}=   Get Request   ${session_name}   /api/v1/product    headers=&{accept}
@@ -41,35 +40,40 @@ ${text_format}=    application/json
     ## assert
     # Status Should Be  200   ${productList}
     Should Be Equal As Integers    ${productList.json()["total"]}    31
-    Should Be Equal As Strings    ${productList.json()["products"][1]["product_name"]}    43 Piece dinner Set
-    Should Be Equal As Numbers    ${productList.json()["products"][1]["product_price"]}    12.95
+    Should Be Equal As Integers    ${productList.json()["products"][1]["id"]}    ${product_id}
     
-เลือกดูรายละเอียดของสินค้าที่ชื้อว่า 43 Piece dinner Set ว่าจำนวนของสินค้า คงเหลืออยู่ 10
+เลือกดูรายละเอียดสินค้า
+    [Arguments]    ${product_id}    ${product_name}
 
 
     # ${productDetail}=   Get Request   ${session_name}   /api/v1/product    headers=&{accept}
     
     # Status Should Be  200   ${productDetail}
     ${productDetail}=   Get On Session   ${session_name}   /api/v1/product/2    headers=&{accept}    expected_status=200
-    Should Be Equal As Integers    ${productDetail.json()["id"]}    2
-    Should Be Equal As Strings    ${productDetail.json()["product_name"]}    43 Piece dinner Set
+    Should Be Equal As Integers    ${productDetail.json()["id"]}    ${product_id}
+    Should Be Equal As Strings    ${productDetail.json()["product_name"]}    ${product_name}
     Should Be Equal As Numbers    ${productDetail.json()["product_price"]}    12.95
     Should Be Equal As Integers    ${productDetail.json()["quantity"]}    10
     
     
-เพิ่มสินค้า ที่ชื้อว่า 43 Piece dinner Set ลงในตะกร้าสินค้า พร้อมแจ้งที่อยู่จัดส่ง จะได้รับ หมายเลขคำสั่งซื้อ ที่ 8004359104 และยอดที่จะต้องชำระคือ 14.95
+เพิ่มสินค้าลงตะกร้า
+    [Arguments]    ${product_id}    ${quantity}    ${total_price}
     # ${body}=    To Json    {"cart":[{"product_id": 2,"quantity": 1}], "shipping_method": "Kerry", "shipping_address": "405/37 ถ.มหิดล", "shipping_sub_district": "ท่าศาลา", "shipping_district": "เมือง", "shipping_province": "เชียงใหม่", "shipping_zip_code": "50000", "recipient_name": "ณัฐญา ชุติบุตร", "recipient_phone_number": "0970809292"}
+    &{cart}=    Create Dictionary    product_id=${product_id}    quantity=${quantity}
+    # @{carts}=    Create List    ${cart}
+    # &{body}=    Create Dictionary    cart=${carts}    shipping_method=Kerry    shipping_address=405/37 ถ.มหิดล    shipping_sub_district=ท่าศาลา    shipping_district=เมือง    shipping_province=เชียงใหม่    shipping_zip_code=50000    recipient_name=ณัฐญา ชุติบุตร    recipient_phone_number=0970809292
 
     ${orderStatus}=    POST On Session    ${session_name}    /api/v1/order    expected_status=200    json=${body}    headers=&{accept}
     
     # Request Should Be Successful    ${orderStatus}
-    Should Be Equal As Numbers    ${orderStatus.json()["total_price"]}    14.95
+    Should Be Equal As Numbers    ${orderStatus.json()["total_price"]}    ${total_price}
     Set Test Variable    ${order_id}    ${orderStatus.json()["order_id"]}
     Should Be Equal As Integers    ${order_id}    8004359104
 
-เลือกวิธีชำระเงินด้วย บัตรเครดิต พร้อมกรอกข้อมูลอื่นๆที่จำเป็น จะได้รับข้อความแจ้งเตือน ระบุหมายเลขจัดส่ง
+เลือกวิธีการชำระเงิน และได้รับข้อความแจ้งเตือน
+    [Arguments]    ${total_price}
     
-    &{body}=    Create Dictionary    order_id=${order_id}    payment_type=credit    type=visa    card_number=4719700591590995    cvv=752    expired_month=${7}    expired_year=${20}    card_name=Karnwat Wongudom    total_price=${14.95}
+    &{body}=    Create Dictionary    order_id=${order_id}    payment_type=credit    type=visa    card_number=4719700591590995    cvv=752    expired_month=${7}    expired_year=${20}    card_name=Karnwat Wongudom    total_price=${total_price}
 
     ${orderStatus}=    POST On Session    ${session_name}    /api/v1/confirmPayment    expected_status=200    json=${body}    headers=&{accept}
     
