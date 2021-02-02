@@ -42,3 +42,6 @@ run_integratetest_backend_by_newman:
 run_integratetest_backend_by_newman_with_reports:
 	make seed && newman run atdd/api/ซื้อสินค้าได้สำเร็จ_v2.json -d atdd/api/data/test-data.json -e atdd/api/environment/local.json -r htmlextra --reporter-htmlextra-export atdd/api/reports/buy_order_sucess.html
 
+run_integratetest_backend_by_robot:
+	make seed && robot atdd/api-robot/shopping-cart-sucess.robot
+	
