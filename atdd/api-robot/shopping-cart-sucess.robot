@@ -13,24 +13,27 @@ ${text_format}=    application/json
 &{accept}=   Accept=${text_format}    Content-Type=${text_format}
 
 
-&{cart}=    product_id=${2}    quantity=${1}
-@{carts}=    ${cart}
-&{body}=    cart=${carts}    shipping_method=Kerry    shipping_address=405/37 ถ.มหิดล    shipping_sub_district=ท่าศาลา    shipping_district=เมือง    shipping_province=เชียงใหม่    shipping_zip_code=50000    recipient_name=ณัฐญา ชุติบุตร    recipient_phone_number=0970809292
-
 
 *** Test Cases ***
+
 ซื้อสินค้าที่มีชื่อว่า 43 Piece dinner Set จำนวน 1 ชิ้น โดยชำระด้วยบัตรเครดิต แล้วชำระแล้วจะมีข้อความตอบกลับว่า ยืนยันการชำระพร้อม หมายเลขจัดส่ง
-    เข้าชมรายการสินค้า    2
-    เลือกดูรายละเอียดสินค้า    2    43 Piece dinner Set
-    เพิ่มสินค้าลงตะกร้า    2    1    14.95
+    ค้นหารายการสินค้า    2    43 Piece dinner Set
+    เลือกดูรายละเอียดสินค้า    ${2}    43 Piece dinner Set
+    เพิ่มสินค้าลงตะกร้า    ${2}    ${1}    ${14.95}
     เลือกวิธีการชำระเงิน และได้รับข้อความแจ้งเตือน    ${14.95}
+
+ซื้อสินค้าที่มีชื่อว่า Balance Training Bicycle จำนวน 2 ชิ้น โดยชำระด้วยบัตรเครดิต แล้วชำระแล้วจะมีข้อความตอบกลับว่า ยืนยันการชำระพร้อม หมายเลขจัดส่ง
+    ค้นหารายการสินค้า    1    Balance Training Bicycle
+    เลือกดูรายละเอียดสินค้า    ${1}    Balance Training Bicycle
+    เพิ่มสินค้าลงตะกร้า    ${1}    ${2}    ${241.90}
+    เลือกวิธีการชำระเงิน และได้รับข้อความแจ้งเตือน    ${241.90}
 
 
 
 *** Keywords ***
 
-เข้าชมรายการสินค้า
-    [Arguments]    ${product_id}
+ค้นหารายการสินค้า
+    [Arguments]    ${product_id}    ${product_name}
     ## arrange
 
     ## act
@@ -40,7 +43,18 @@ ${text_format}=    application/json
     ## assert
     # Status Should Be  200   ${productList}
     Should Be Equal As Integers    ${productList.json()["total"]}    31
-    Should Be Equal As Integers    ${productList.json()["products"][1]["id"]}    ${product_id}
+
+    ${products}=    Get From Dictionary     ${productList.json()}    products
+    Set Test Variable    ${products}    ${products}
+    ${id}=    Set Variable    ${0}
+    FOR     ${product}    IN     @{products}
+        ${id}=      Set Variable    ${product["id"]}
+        Run Keyword If    '${product["product_name"]}' == '${product_name}'   Exit For Loop
+        ${id}=      Set Variable    ${0}
+    END
+    Should Be True     ${id} != 0    product id should not equal 0
+    # Set Test Variable    ${product_id}    ${id}
+
     
 เลือกดูรายละเอียดสินค้า
     [Arguments]    ${product_id}    ${product_name}
@@ -49,26 +63,24 @@ ${text_format}=    application/json
     # ${productDetail}=   Get Request   ${session_name}   /api/v1/product    headers=&{accept}
     
     # Status Should Be  200   ${productDetail}
-    ${productDetail}=   Get On Session   ${session_name}   /api/v1/product/2    headers=&{accept}    expected_status=200
+    ${productDetail}=   Get On Session   ${session_name}   /api/v1/product/${product_id}    headers=&{accept}    expected_status=200
     Should Be Equal As Integers    ${productDetail.json()["id"]}    ${product_id}
     Should Be Equal As Strings    ${productDetail.json()["product_name"]}    ${product_name}
-    Should Be Equal As Numbers    ${productDetail.json()["product_price"]}    12.95
-    Should Be Equal As Integers    ${productDetail.json()["quantity"]}    10
+    
     
     
 เพิ่มสินค้าลงตะกร้า
     [Arguments]    ${product_id}    ${quantity}    ${total_price}
     # ${body}=    To Json    {"cart":[{"product_id": 2,"quantity": 1}], "shipping_method": "Kerry", "shipping_address": "405/37 ถ.มหิดล", "shipping_sub_district": "ท่าศาลา", "shipping_district": "เมือง", "shipping_province": "เชียงใหม่", "shipping_zip_code": "50000", "recipient_name": "ณัฐญา ชุติบุตร", "recipient_phone_number": "0970809292"}
     &{cart}=    Create Dictionary    product_id=${product_id}    quantity=${quantity}
-    # @{carts}=    Create List    ${cart}
-    # &{body}=    Create Dictionary    cart=${carts}    shipping_method=Kerry    shipping_address=405/37 ถ.มหิดล    shipping_sub_district=ท่าศาลา    shipping_district=เมือง    shipping_province=เชียงใหม่    shipping_zip_code=50000    recipient_name=ณัฐญา ชุติบุตร    recipient_phone_number=0970809292
+    @{carts}=    Create List    ${cart}
+    &{body}=    Create Dictionary    cart=${carts}    shipping_method=Kerry    shipping_address=405/37 ถ.มหิดล    shipping_sub_district=ท่าศาลา    shipping_district=เมือง    shipping_province=เชียงใหม่    shipping_zip_code=50000    recipient_name=ณัฐญา ชุติบุตร    recipient_phone_number=0970809292
 
     ${orderStatus}=    POST On Session    ${session_name}    /api/v1/order    expected_status=200    json=${body}    headers=&{accept}
     
     # Request Should Be Successful    ${orderStatus}
     Should Be Equal As Numbers    ${orderStatus.json()["total_price"]}    ${total_price}
     Set Test Variable    ${order_id}    ${orderStatus.json()["order_id"]}
-    Should Be Equal As Integers    ${order_id}    8004359104
 
 เลือกวิธีการชำระเงิน และได้รับข้อความแจ้งเตือน
     [Arguments]    ${total_price}
