@@ -11,12 +11,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8000/mockTime/{{mocktime}}",
-					"protocol": "http",
+					"raw": "{{url}}/mockTime/{{mocktime}}",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8000",
 					"path": [
 						"mockTime",
 						"{{mocktime}}"
@@ -64,12 +62,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8000/api/v1/product",
-					"protocol": "http",
+					"raw": "{{url}}/api/v1/product",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8000",
 					"path": [
 						"api",
 						"v1",
@@ -136,12 +132,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8000/api/v1/product/{{product_id}}",
-					"protocol": "http",
+					"raw": "{{url}}/api/v1/product/{{product_id}}",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8000",
 					"path": [
 						"api",
 						"v1",
@@ -196,12 +190,10 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8000/api/v1/order",
-					"protocol": "http",
+					"raw": "{{url}}/api/v1/order",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8000",
 					"path": [
 						"api",
 						"v1",
@@ -258,12 +250,10 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8000/api/v1/confirmPayment",
-					"protocol": "http",
+					"raw": "{{url}}/api/v1/confirmPayment",
 					"host": [
-						"localhost"
+						"{{url}}"
 					],
-					"port": "8000",
 					"path": [
 						"api",
 						"v1",
