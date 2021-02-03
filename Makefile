@@ -48,5 +48,8 @@ run_integratetest_backend_by_robot:
 run_integratetest_backend_by_robot_change_url:
 	make seed && robot -v url:http://127.0.0.1:8000 atdd/api-robot/shopping-cart-sucess.robot
 	
+run_integratetest_backend_by_robot_select_env_file:
+	make seed && robot -V atdd/api-robot/environment/local.yml atdd/api-robot/shopping-cart-sucess.robot
+	
 
 
