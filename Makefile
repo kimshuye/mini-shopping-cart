@@ -46,7 +46,7 @@ run_integratetest_backend_by_robot:
 	make seed && robot atdd/api-robot/shopping-cart-sucess.robot
 	
 run_integratetest_backend_by_robot_change_url:
-	make seed && robot -v -v url:http://127.0.0.1:8000 atdd/api-robot/shopping-cart-sucess.robot
+	make seed && robot -v url:http://127.0.0.1:8000 atdd/api-robot/shopping-cart-sucess.robot
 	
 
 
