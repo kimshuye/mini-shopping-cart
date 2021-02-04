@@ -51,5 +51,7 @@ run_integratetest_backend_by_robot_change_url:
 run_integratetest_backend_by_robot_select_env_file:
 	make seed && robot -V atdd/api-robot/environment/local.yml atdd/api-robot/shopping-cart-sucess.robot
 	
-
+run_test_fake:
+	robot atdd/api-robot/test-faker.robot
+	
 
