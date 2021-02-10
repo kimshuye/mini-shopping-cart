@@ -3,5 +3,5 @@ robotframework==3.2.2
 PyYAML==5.4.1
 Faker==5.8.0
 robotframework-faker==5.0.0
-
+robotframework-screencaplibrary==1.5.0
 
