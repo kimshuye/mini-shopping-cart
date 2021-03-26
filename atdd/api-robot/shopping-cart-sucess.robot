@@ -5,7 +5,7 @@ Suite Setup    Create Session   ${session_name}   ${url}
 Suite Teardown    Delete All Sessions
 Test Template    ซื้อสินค้าที่มีชื่อว่า Product
 
-Resource    resource/shopping-cart-sucess.robot
+Resource    ./resource/shopping-cart-sucess.robot
 
 *** Test Cases ***          name                        id          quantity    total_price
 

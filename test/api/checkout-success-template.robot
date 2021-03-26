@@ -53,8 +53,8 @@ Checkout Product
     Confirm Payment     ${total_price}    ${notify_message}
 
 Get Product List
-    Get Request    ${toy_store}    /mockTime/01032020T13:30:00
-    ${productList}=   Get Request    ${toy_store}    /api/v1/product    headers=&{ACCEPT}
+    # GET On Session    ${toy_store}    /mockTime/01032020T13:30:00
+    ${productList}=   GET On Session    ${toy_store}    /api/v1/product    headers=&{ACCEPT}
     Status Should Be  200            ${productList}
     Should Be Equal     ${productList.json()["total"]}     ${2}
     ${products}=    Get From Dictionary     ${productList.json()}    products
@@ -73,7 +73,7 @@ Find Product by Name
 
 Get Product Detail
     [Arguments]    ${product_name}
-    ${productDetail}=    Get Request    ${toy_store}    /api/v1/product/${product_id}    headers=&{ACCEPT}
+    ${productDetail}=    GET On Session    ${toy_store}    /api/v1/product/${product_id}    headers=&{ACCEPT}
     Request Should Be Successful    ${productDetail}
     Should Be Equal     ${productDetail.json()["product_name"]}    ${product_name}
 
@@ -81,7 +81,7 @@ Order Product
     [Arguments]     ${quantity}    ${total_price}
     ${message}=     Replace Variables    ${ORDER_TEMPLATE}
     ${order}=    To json    ${message}
-    ${orderStatus}=     Post Request    ${toy_store}    /api/v1/order    json=${order}    headers=&{POST_HEADERS}
+    ${orderStatus}=     POST On Session    ${toy_store}    /api/v1/order    json=${order}    headers=&{POST_HEADERS}
     Status Should Be    200    ${orderStatus}
     Should Be Equal As Numbers    ${orderStatus.json()["total_price"]}   ${total_price}
     Set Test Variable    ${order_id}    ${orderStatus.json()["order_id"]}
@@ -91,6 +91,6 @@ Confirm Payment
     ${notify_message}=     Replace Variables    ${notify_message}
     ${message}=     Replace Variables    ${CONFIRM_PAYMENT_TEMPLATE}
     ${confirmPayment}=    To Json    ${message}
-    ${confirmPaymentStatus}=     Post Request    ${toy_store}    /api/v1/confirmPayment    json=${confirmPayment}    headers=&{POST_HEADERS}
+    ${confirmPaymentStatus}=     POST On Session    ${toy_store}    /api/v1/confirmPayment    json=${confirmPayment}    headers=&{POST_HEADERS}
     Request Should Be Successful    ${confirmPaymentStatus}
     Should Be Equal As Strings   ${confirmPaymentStatus.json()["notify_message"]}    ${notify_message}

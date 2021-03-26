@@ -1,31 +1,37 @@
-backend: code_analysis_backend run_unittest_backend run_integratetest_backend build_backend start_service run_robot_requests stop_service
+# backend: code_analysis_backend run_unittest_backend run_integratetest_backend build_backend start_service run_robot_requests stop_service
+backend: code_analysis_backend run_unittest_backend run_integratetest_backend build_backend start_service run_integratetest_backend_by_robot stop_service
 
 run_robot_selinium: 
 	python3 -m robot test/ui/shopping_cart_success.robot
 
 run_robot_requests:
-	sleep 10
-	#cat tearup/init.sql | docker exec -i store-database /usr/bin/mysql -u sealteam --password=sckshuhari --default-character-set=utf8  toy
+	sleep 20
+	cat tearup/init.sql | docker exec -i store-database /usr/bin/mysql -u sealteam --password=sckshuhari --default-character-set=utf8  toy
 	python3 -m robot test/api/checkout-success-template.robot
 
 code_analysis_backend:
-	cd store-service && go vet ./...
+	cd store-service && docker run --rm -v "${PWD}/store-service":/usr/src/myapp -w /usr/src/myapp golang:1.15.3 go vet ./...
+	# cd store-service && go vet ./...
 
 run_unittest_backend:
-	cd store-service && go test ./... -v
+	cd store-service && docker run --rm -v "${PWD}/store-service":/usr/src/myapp -w /usr/src/myapp golang:1.15.3 go test ./... -v
+	# cd store-service && go test ./... -v
 
 run_integratetest_backend:
 	docker-compose up -d store-database bank-gateway shipping-gateway
-	sleep 10
-	#cat tearup/init.sql | docker exec -i store-database /usr/bin/mysql -u sealteam --password=sckshuhari --default-character-set=utf8  toy
-	cd store-service && go test -tags=integration ./...
-	docker-compose down
+	sleep 20
+	cat tearup/init.sql | docker exec -i store-database /usr/bin/mysql -u sealteam --password=sckshuhari --default-character-set=utf8  toy
+	# sleep 10
+	# cd store-service && docker run --rm -v "${PWD}/store-service":/usr/src/myapp -w /usr/src/myapp golang:1.15.3 go test -tags=integration ./...
+	# cd store-service && go test -tags=integration ./...
+	docker-compose down | true
 
 build_backend:
 	docker-compose build store-service
 
 start_service:
 	docker-compose up -d
+	sleep 20
 
 status_service:
 	docker-compose ps
