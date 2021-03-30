@@ -28,8 +28,8 @@ func main() {
 		useCache = true
 	}
 
-	bankGatewayEndpoint := "bank-gateway:8882"
-	shippingGatewayEndpoint := "shipping-gateway:8882"
+	bankGatewayEndpoint := "bank-gateway:80"
+	shippingGatewayEndpoint := "shipping-gateway:80"
 
 	if os.Getenv("BANK_GATEWAY") != "" {
 		bankGatewayEndpoint = os.Getenv("BANK_GATEWAY")

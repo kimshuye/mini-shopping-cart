@@ -14,7 +14,7 @@ import (
 )
 
 func Test_ShippingRepository(t *testing.T) {
-	connection, err := sqlx.Connect("mysql", "sealteam:sckshuhari@(localhost:3306)/toy")
+	connection, err := sqlx.Connect("mysql", "sealteam:sckshuhari@(store-database:3306)/toy")
 	if err != nil {
 		t.Fatalf("cannot tearup data err %s", err)
 	}

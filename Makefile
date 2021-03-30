@@ -10,19 +10,21 @@ run_robot_requests:
 	python3 -m robot test/api/checkout-success-template.robot
 
 code_analysis_backend:
-	cd store-service && docker run --rm -v "${PWD}/store-service":/usr/src/myapp -w /usr/src/myapp golang:1.15.3 go vet ./...
+	cd store-service && docker build -t toy-store-service:0.0.2 -f Dockerfile.run .
+	docker network create mini-shopping-cart_default
+	cd store-service && docker run --name store-service_1 --network=mini-shopping-cart_default --rm -v "${PWD}/store-service":/usr/src/myapp -w /usr/src/myapp toy-store-service:0.0.2 go vet ./...
 	# cd store-service && go vet ./...
 
 run_unittest_backend:
-	cd store-service && docker run --rm -v "${PWD}/store-service":/usr/src/myapp -w /usr/src/myapp golang:1.15.3 go test ./... -v
+	cd store-service && docker run --name store-service_1 --network=mini-shopping-cart_default --rm -v "${PWD}/store-service":/usr/src/myapp -w /usr/src/myapp toy-store-service:0.0.2 go test ./... -v
 	# cd store-service && go test ./... -v
 
 run_integratetest_backend:
 	docker-compose up -d store-database bank-gateway shipping-gateway
 	sleep 20
 	cat tearup/init.sql | docker exec -i store-database /usr/bin/mysql -u sealteam --password=sckshuhari --default-character-set=utf8  toy
-	# sleep 10
-	# cd store-service && docker run --rm -v "${PWD}/store-service":/usr/src/myapp -w /usr/src/myapp golang:1.15.3 go test -tags=integration ./...
+	sleep 20
+	cd store-service && docker run --name store-service_1 --network=mini-shopping-cart_default --rm -v "${PWD}/store-service":/usr/src/myapp -w /usr/src/myapp toy-store-service:0.0.2 go test -tags=integration ./...
 	# cd store-service && go test -tags=integration ./...
 	docker-compose down | true
 

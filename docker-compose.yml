@@ -17,6 +17,8 @@ services:
       - BANK_GATEWAY=bank-gateway
       - SHIPPING_GATEWAY=shipping-gateway
       - DBCONNECTION=sealteam:sckshuhari@(store-database:3306)/toy
+    networks:
+      - backend
 
   store-database:
     image: mysql:8.0.22
@@ -30,6 +32,8 @@ services:
       - ./tearup/:/docker-entrypoint-initdb.d/
     ports:
       - '3306:3306'
+    networks:
+      - backend
 
   store-nginx:
     image: nginx:1.19.3-alpine
@@ -44,6 +48,7 @@ services:
       - '80:80'
 
   bank-gateway:
+    container_name: bank-gateway
     image: andyrbell/mountebank:2.3.2
     volumes:
       - ./bank-gateway/imposters.json:/imposters/imposters.json
@@ -57,8 +62,11 @@ services:
       ]
     ports:
       - "8882:80"
+    networks:
+      - backend
 
   shipping-gateway:
+    container_name: shipping-gateway
     image: andyrbell/mountebank:2.3.2
     volumes:
       - ./shipping-gateway/imposters.json:/imposters/imposters.json
@@ -72,3 +80,11 @@ services:
       ]
     ports:
       - "8883:80"
+    networks:
+      - backend
+
+networks:
+  backend:
+    name: mini-shopping-cart_default
+    driver: bridge
+
