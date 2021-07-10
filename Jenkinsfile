@@ -4,6 +4,7 @@ pipeline {
   stages {
     stage('code analysis') {
       steps {
+        sh 'id'
         sh 'make code_analysis_backend' 
       }
     }
