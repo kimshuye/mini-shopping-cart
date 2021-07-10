@@ -1,9 +1,5 @@
 pipeline {
   agent any
-  
-  environment {
-    DOCKER_HOST="tcp://localhost:2376"
-  }
 
   stages {
     stage('code analysis') {
